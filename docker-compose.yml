@@ -1,0 +1,10 @@
+services:
+  app:
+    container_name: app
+    restart: no
+    build:
+      context: .
+    environment:
+      LOG_LEVEL: DEBUG
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_GENERAL_CHANNELID: ${DISCORD_GENERAL_CHANNELID}
