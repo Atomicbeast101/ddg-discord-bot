@@ -1,5 +1,6 @@
 # Imports
 import bin.config
+import bin.chat
 import discord
 import logging
 import random
@@ -13,7 +14,8 @@ class BotClient(discord.Client):
     async def on_ready(self):
         log.info(f'Starting up {config.NAME} discord bot...')
 
-        # TODO: any code if needed
+        # Set activity status
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'@{self.user.name} {config.DISCORD_COMMAND_STARTING_CHAR}help'))
 
         log.info(f'Bot ready to work in dark alleys!')
 
@@ -34,17 +36,19 @@ class BotClient(discord.Client):
 
         # Process commands
         if message.content.startswith(f'<@{self.user.id}>'):
+            CONTENT = message.content.split(' ')[1:]
+
             if message.content.split(' ')[1][0] == config.DISCORD_COMMAND_STARTING_CHAR:
                 COMMAND = message.content.split(' ')[1][1:].lower()
                 if COMMAND in config.DISCORD_COMMANDS:
                     await config.DISCORD_COMMANDS[COMMAND]['call'](self, message)
 
-            # Reply with llama response
+            elif CONTENT.lower() == 'fuck you':
+                await message.reply(f'That\'ll cost ya ${random.randint(1, 10)} :dollar:', mention_author=True)
+
             else:
+                # await bin.chat.query_ai(self, message)
                 await message.reply('I\'m on 5min break (not ready for AI responses yet).', mention_author=True)
 
         elif message.content.lower().contains('bitch'):
             await message.reply('hoe', mention_author=True)
-
-        elif message.content.lower() == 'fuck you':
-            await message.reply(f'That\'ll cost ya ${random.randint(1, 10)} :dollar:', mention_author=True)

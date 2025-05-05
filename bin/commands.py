@@ -11,10 +11,10 @@ async def help(bot, message):
     msg = '''**Help Guide:**
 ```'''
     for cmd in config.DISCORD_COMMANDS:
-        usage = config.DISCORD_COMMANDS[cmd]['usage']
+        usage = ' ' + config.DISCORD_COMMANDS[cmd]['usage'] if config.DISCORD_COMMANDS[cmd]['usage'] else ''
         description = config.DISCORD_COMMANDS[cmd]['description']
 
-        msg += f'''{config.DISCORD_COMMAND_STARTING_CHAR}{cmd} {usage} ({description})
+        msg += f'''@{bot.user.name} {config.DISCORD_COMMAND_STARTING_CHAR}{cmd}{usage} ({description})
 '''
     msg +='''```'''
 
@@ -27,23 +27,24 @@ async def joke(bot, message):
     CONTENT = message.content.split(' ')[1:]
 
     URL = 'https://icanhazdadjoke.com/'
-    try:
-        r = requests.get(
-            URL,
-            headers={
-                'User-Agent': f'DDG {config.NAME} Discord Bot',
-                'Accept': 'application/json'
-            }
-        )
-        if r.status_code == 200:
-            await message.reply(r.json()['joke'])
-        else:
-            await message.reply('Unable to get you a random joke...ran out of cash (server issue).')
+    async with message.channel.typing():
+        try:
+                r = requests.get(
+                    URL,
+                    headers={
+                        'User-Agent': f'DDG {config.NAME} Discord Bot',
+                        'Accept': 'application/json'
+                    }
+                )
+                if r.status_code == 200:
+                    await message.reply(r.json()['joke'])
+                else:
+                    await message.reply('Unable to get you a random joke...ran out of cash (server issue).')
 
-    except Exception as ex:
-        log.error(f'Unable to get response from {URL} endpoint! Reason: {str(ex)}')
-        log.debug(str(ex))
-        await message.reply('Unable to get you a random joke...ran out of cash (server issue).')
+        except Exception as ex:
+            log.error(f'Unable to get response from {URL} endpoint! Reason: {str(ex)}')
+            log.debug(str(ex))
+            await message.reply('Unable to get you a random joke...ran out of cash (server issue).')
 
 # https://github.com/D3vd/Meme_Api
 # https://meme-api.com/gimme
@@ -53,23 +54,24 @@ async def meme(bot, message):
     CONTENT = message.content.split(' ')[1:]
 
     URL = 'https://meme-api.com/gimme'
-    try:
-        r = requests.get(
-            URL,
-            headers={
-                'User-Agent': f'DDG {config.NAME} Discord Bot',
-                'Accept': 'application/json'
-            }
-        )
-        if r.status_code == 200:
-            await message.reply(r.json()['url'])
-        else:
-            await message.reply('Unable to get you a random meme...ran out of cash (server issue).')
+    async with message.channel.typing():
+        try:
+                r = requests.get(
+                    URL,
+                    headers={
+                        'User-Agent': f'DDG {config.NAME} Discord Bot',
+                        'Accept': 'application/json'
+                    }
+                )
+                if r.status_code == 200:
+                    await message.reply(r.json()['url'])
+                else:
+                    await message.reply('Unable to get you a random meme...ran out of cash (server issue).')
 
-    except Exception as ex:
-        log.error(f'Unable to get response from {URL} endpoint! Reason: {str(ex)}')
-        log.debug(str(ex))
-        await message.reply('Unable to get you a random meme...ran out of cash (server issue).')
+        except Exception as ex:
+            log.error(f'Unable to get response from {URL} endpoint! Reason: {str(ex)}')
+            log.debug(str(ex))
+            await message.reply('Unable to get you a random meme...ran out of cash (server issue).')
 
 # Ideas:
 # - @Hookerbot /gif - random PG-13 gif (find API for this)

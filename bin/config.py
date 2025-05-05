@@ -36,3 +36,6 @@ class Config:
             'description': 'Random meme'
         }
     }
+
+    ## OLLAMA
+    OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL')
