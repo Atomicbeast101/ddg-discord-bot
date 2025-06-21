@@ -1,6 +1,7 @@
 # Imports
 import bin.config
 import bin.chat
+import traceback
 import discord
 import logging
 import random
@@ -30,25 +31,29 @@ class BotClient(discord.Client):
     # )
 
     async def on_message(self, message):
-        # Prevent bot from talking to itself
-        if message.author == self.user:
-            return
+        try:
+            # Prevent bot from talking to itself
+            if message.author == self.user:
+                return
 
-        # Process commands
-        if message.content.startswith(f'<@{self.user.id}>'):
-            CONTENT = message.content.split(' ')[1:]
+            # Process commands
+            if message.content.startswith(f'<@{self.user.id}>'):
+                CONTENT = message.content.split(' ')[1:]
 
-            if message.content.split(' ')[1][0] == config.DISCORD_COMMAND_STARTING_CHAR:
-                COMMAND = message.content.split(' ')[1][1:].lower()
-                if COMMAND in config.DISCORD_COMMANDS:
-                    await config.DISCORD_COMMANDS[COMMAND]['call'](self, message)
+                if message.content.split(' ')[1][0] == config.DISCORD_COMMAND_STARTING_CHAR:
+                    COMMAND = message.content.split(' ')[1][1:].lower()
+                    if COMMAND in config.DISCORD_COMMANDS:
+                        await config.DISCORD_COMMANDS[COMMAND]['call'](self, message)
 
-            elif CONTENT.lower() == 'fuck you':
-                await message.reply(f'That\'ll cost ya ${random.randint(1, 10)} :dollar:', mention_author=True)
+                elif CONTENT.lower() == 'fuck you':
+                    await message.reply(f'That\'ll cost ya ${random.randint(1, 10)} :dollar:', mention_author=True)
 
-            else:
-                # await bin.chat.query_ai(self, message)
-                await message.reply('I\'m on 5min break (not ready for AI responses yet).', mention_author=True)
+                else:
+                    # await bin.chat.query_ai(self, message)
+                    await message.reply('I\'m on 5min break (not ready for AI responses yet).', mention_author=True)
 
-        elif message.content.lower().contains('bitch'):
-            await message.reply('hoe', mention_author=True)
+            elif message.content.lower().contains('bitch'):
+                await message.reply('hoe', mention_author=True)
+
+        except Exception as ex:
+            log.error(f'Unexpected error when trying to process message from {message.author.name} ({message.author.id}): [{message.content}]. Reason: {str(ex)}\n{traceback.format_exc()}')
